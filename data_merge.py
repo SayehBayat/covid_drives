@@ -1,21 +1,13 @@
+"""
+created on Wed Aug 4
+
+@author: Sayeh Bayat
+"""
 import numpy as np
 import pandas as pd
 from biomarker import format_lumi_df, csf_date_filter
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-import itertools
-import operator
 from pandas import Timestamp
 
-from collections import Counter
-from datetime import datetime, timedelta, date
-
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
-
-import glob
-import geopy.distance
 
 
 def merge_csf_trip(lumi, tdf):
@@ -55,5 +47,5 @@ if __name__ == '__main__':
                        "data/UP0320_LUMIPULSE_012821_forCollab.csv")
 
     df = merge_all(lumi, trip, demo)
-    df.to_pickle("./dummy.pkl")
+    df.to_pickle("D:/COVID_data/covid_data.pkl")
     print(df)
