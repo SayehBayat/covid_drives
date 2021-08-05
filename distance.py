@@ -53,15 +53,18 @@ def monthly_dist(df):
     return df_distM.reset_index(drop=True)
 
 
-def lowess_plot(ctl, pwd):
-    sm_x, sm_y = sm_lowess(ctl.Trip_Dist, np.arange(1, len(ctl)+1), frac=1. / 5.,
+def lowess_plot(ctl, pwd, var, f=1. / 5.):
+    sm_x, sm_y = sm_lowess(ctl[var], np.arange(1, len(ctl)+1), frac=f,
                            it=5, return_sorted=True).T
     plt.plot(sm_x, sm_y, color='tomato')
     #plt.plot(np.arange(1, len(ctl)+1), ctl.Trip_Dist, 'r.')
 
-    sm_x, sm_y = sm_lowess(pwd.Trip_Dist, np.arange(1, len(pwd)+1), frac=1. / 5.,
+    sm_x, sm_y = sm_lowess(pwd[var], np.arange(1, len(pwd)+1), frac=f,
                            it=5, return_sorted=True).T
     plt.plot(sm_x, sm_y, color='blue')
+    plt.legend(["CTL", "PWD"])
+    plt.ylabel(var)
+    plt.xlabel("day")
     #plt.plot(np.arange(1, len(pwd) + 1), pwd.Trip_Dist, 'b.')
     return plt
 
@@ -72,18 +75,19 @@ if __name__ == '__main__':
     df['Trip_Dist'] = trip_dist(str_coord, end_coord)
     print(df.Trip_Dist)
 
-    pwd = df[df["ab42_stat"] == 1]
+    pwd = df[df["ab42_stat30"] == 1]
     pwd_dist_daily = tot_daily_dist(pwd)
     pwd_dist_daily = pwd_dist_daily.iloc[1:, :]
 
-    ctl = df[df["ab42_stat"] == 0]
+    ctl = df[df["ab42_stat30"] == 0]
     ctl_dist_daily = tot_daily_dist(ctl)
     ctl_dist_daily = ctl_dist_daily.iloc[1:, :]
-    #plt = lowess_plot(ctl_dist_daily, pwd_dist_daily)
+    plt = lowess_plot(ctl_dist_daily, pwd_dist_daily, var="Trip_Dist")
+    plt.show()
 
     monthly_pwd = monthly_dist(pwd_dist_daily)
     monthly_ctl = monthly_dist(ctl_dist_daily)
 
-    plt = lowess_plot(monthly_ctl, monthly_pwd)
+    plt = lowess_plot(monthly_ctl, monthly_pwd, var="Trip_Dist", f=1. / 4.)
     plt.show()
 

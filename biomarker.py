@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from pandas import Timestamp
 from datetime import datetime, timedelta, date
+import matplotlib.pyplot as plt
 
 
 def find_ab42_ratio(ab42, ab40):
@@ -18,6 +19,16 @@ def find_ab42_ratio(ab42, ab40):
     ab42_stat = ab42_ratio < 0.0673
     ab42_stat = ab42_stat.astype(int)
     return ab42_ratio, ab42_stat
+
+
+def find_ab42_ratio_30(ab42, ab40):
+    """
+    Compute ab42/ab40 biomarker
+    """
+    ab42_ratio = ab42 / ab40
+    ab42_stat = ab42_ratio <= 0.04147
+    ab42_stat = ab42_stat.astype(int)
+    return ab42_stat
 
 
 def find_ptau_ratio(ptau, ab42):
@@ -38,10 +49,12 @@ def format_lumi_df(df):
     df["Subject ID"] = df["Subject ID"].astype(int)
 
     ab42_ratio, ab42_stat = find_ab42_ratio(df.LUMIPULSE_CSF_AB42, df.LUMIPULSE_CSF_AB40)
+    ab42_stat30 = find_ab42_ratio_30(df.LUMIPULSE_CSF_AB42, df.LUMIPULSE_CSF_AB40)
     ptau_ratio, ptau_stat = find_ab42_ratio(df.LUMIPULSE_CSF_pTau, df.LUMIPULSE_CSF_AB42)
 
     df["ab42_ratio"] = ab42_ratio
     df["ab42_stat"] = ab42_stat
+    df["ab42_stat30"] = ab42_stat30
     df["ptau_ratio"] = ptau_ratio
     df["ptau_stat"] = ptau_stat
     return df
@@ -64,4 +77,7 @@ if __name__ == '__main__':
     a = Timestamp('1905-01-01 00:00:00')
     b = Timestamp('1910-01-01 00:00:00')
     df = csf_date_filter(df, a, b)
+    plt.hist(df.ab42_ratio)
+    plt.show()
+    print(df.ab42_ratio.min(), df.ab42_ratio.max())
     print(df)
