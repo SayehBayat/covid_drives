@@ -26,8 +26,9 @@ def find_ab42_ratio_30(ab42, ab40):
     Compute ab42/ab40 biomarker
     """
     ab42_ratio = ab42 / ab40
-    ab42_stat = ab42_ratio <= 0.04147
-    ab42_stat = ab42_stat.astype(int)
+    ab42_stat = (ab42_ratio <= 0.04147).astype(int) + (ab42_ratio < 0.0673).astype(int)
+    print(ab42_stat)
+    #ab42_stat = ab42_stat.astype(int)
     return ab42_stat
 
 
